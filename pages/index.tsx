@@ -4,7 +4,7 @@ import { orgName } from '../components/constants';
 import { Navbar } from '../components/Navbar';
 import { useActiveUser } from '../components/UserProvider';
 import dynamic from 'next/dynamic';
-const QrReader = dynamic(() => import('react-qr-reader'), { ssr: false });
+const QrReader: any = dynamic(() => import('react-qr-reader'), { ssr: false });
 
 interface participantPassportDataInterface {
   authId: string;
