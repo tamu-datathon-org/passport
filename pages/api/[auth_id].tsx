@@ -23,7 +23,7 @@ const sendParticipantPassportData = async (req: NextApiRequest, res: NextApiResp
   // const volunteerRes = await fetch(`http://localhost:3000/passport/api/volunteer?userAuthId=${user.authId}`);
   const volunteerRes = await fetch(`${getBaseUrl(req)}/passport/api/volunteer?userAuthId=${user.authId}`);
   const volunteerJson = await volunteerRes.json();
-  console.log('volunteerJson:', volunteerJson);
+  console.log('volunteerJson ===', volunteerJson);
   if (user.isAdmin || volunteerJson['isVolunteer']) {
     const participantAuthId = req.query.auth_id;
     const participantData = await findOneObject('users', { authId: participantAuthId });
@@ -73,7 +73,7 @@ const sendParticipantPassportData = async (req: NextApiRequest, res: NextApiResp
 const updateParticipantPassportData = async (req: NextApiRequest, res: NextApiResponse, user: User) => {
   // const volunteerRes = await fetch(`http://localhost:3000/passport/api/volunteer?userAuthId=${user.authId}`);
   const volunteerRes = await fetch(`${getBaseUrl(req)}/passport/api/volunteer?userAuthId=${user.authId}`);
-  const volunteerJson = volunteerRes.json();
+  const volunteerJson = await volunteerRes.json();
   if (user.isAdmin || volunteerJson['isVolunteer']) {
     const updatedObject = req.body.updatedObject;
     try {
@@ -91,7 +91,7 @@ const updateParticipantPassportData = async (req: NextApiRequest, res: NextApiRe
 const addParticipantAttendedEvents = async (req: NextApiRequest, res: NextApiResponse, user: User) => {
   // const volunteerRes = await fetch(`http://localhost:3000/passport/api/volunteer?userAuthId=${user.authId}`);
   const volunteerRes = await fetch(`${getBaseUrl(req)}/passport/api/volunteer?userAuthId=${user.authId}`);
-  const volunteerJson = volunteerRes.json();
+  const volunteerJson = await volunteerRes.json();
   if (user.isAdmin || volunteerJson['isVolunteer']) {
     const eventId = req.body.eventId;
     const userAuthId = req.body.userAuthId;
@@ -111,7 +111,7 @@ const addParticipantAttendedEvents = async (req: NextApiRequest, res: NextApiRes
 const deleteParticipantAttendedEvents = async (req: NextApiRequest, res: NextApiResponse, user: User) => {
   // const volunteerRes = await fetch(`http://localhost:3000/passport/api/volunteer?userAuthId=${user.authId}`);
   const volunteerRes = await fetch(`${getBaseUrl(req)}/passport/api/volunteer?userAuthId=${user.authId}`);
-  const volunteerJson = volunteerRes.json();
+  const volunteerJson = await volunteerRes.json();
   if (user.isAdmin || volunteerJson['isVolunteer']) {
     const eventId = req.body.eventId;
     const userAuthId = req.body.userAuthId;
