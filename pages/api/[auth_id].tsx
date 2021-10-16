@@ -20,12 +20,9 @@ const defaultParticipantData: participantPassportDataInterface = {
 };
 
 const sendParticipantPassportData = async (req: NextApiRequest, res: NextApiResponse, user: User) => {
-  console.log('checkpoint 2');
-  // const volunteerRes = await fetch(`http://localhost:3000/passport/api/volunteer?userAuthId=${user.authId}`);
-  const volunteerRes = await fetch(`${getBaseUrl(req)}/passport/api/volunteer?userAuthId=${user.authId}`);
-  const volunteerJson = await volunteerRes.json();
-  console.log('volunteerJson ===', volunteerJson);
-  if (user.isAdmin || volunteerJson['isVolunteer']) {
+  const filteredVolunteers = await findQueriedObjects('volunteers', { userAuthId: user.authId });
+  const userIsVolunteer = filteredVolunteers.length > 0;
+  if (user.isAdmin || userIsVolunteer) {
     const participantAuthId = req.query.auth_id;
     const participantData = await findOneObject('users', { authId: participantAuthId });
 
@@ -72,10 +69,9 @@ const sendParticipantPassportData = async (req: NextApiRequest, res: NextApiResp
 };
 
 const updateParticipantPassportData = async (req: NextApiRequest, res: NextApiResponse, user: User) => {
-  // const volunteerRes = await fetch(`http://localhost:3000/passport/api/volunteer?userAuthId=${user.authId}`);
-  const volunteerRes = await fetch(`${getBaseUrl(req)}/passport/api/volunteer?userAuthId=${user.authId}`);
-  const volunteerJson = await volunteerRes.json();
-  if (user.isAdmin || volunteerJson['isVolunteer']) {
+  const filteredVolunteers = await findQueriedObjects('volunteers', { userAuthId: user.authId });
+  const userIsVolunteer = filteredVolunteers.length > 0;
+  if (user.isAdmin || userIsVolunteer) {
     const updatedObject = req.body.updatedObject;
     try {
       await updateOneObject('passport', { authId: updatedObject.authId }, updatedObject);
@@ -90,10 +86,9 @@ const updateParticipantPassportData = async (req: NextApiRequest, res: NextApiRe
 };
 
 const addParticipantAttendedEvents = async (req: NextApiRequest, res: NextApiResponse, user: User) => {
-  // const volunteerRes = await fetch(`http://localhost:3000/passport/api/volunteer?userAuthId=${user.authId}`);
-  const volunteerRes = await fetch(`${getBaseUrl(req)}/passport/api/volunteer?userAuthId=${user.authId}`);
-  const volunteerJson = await volunteerRes.json();
-  if (user.isAdmin || volunteerJson['isVolunteer']) {
+  const filteredVolunteers = await findQueriedObjects('volunteers', { userAuthId: user.authId });
+  const userIsVolunteer = filteredVolunteers.length > 0;
+  if (user.isAdmin || userIsVolunteer) {
     const eventId = req.body.eventId;
     const userAuthId = req.body.userAuthId;
     console.log('eventId:', eventId, 'userAuthId:', userAuthId);
@@ -110,10 +105,9 @@ const addParticipantAttendedEvents = async (req: NextApiRequest, res: NextApiRes
 };
 
 const deleteParticipantAttendedEvents = async (req: NextApiRequest, res: NextApiResponse, user: User) => {
-  // const volunteerRes = await fetch(`http://localhost:3000/passport/api/volunteer?userAuthId=${user.authId}`);
-  const volunteerRes = await fetch(`${getBaseUrl(req)}/passport/api/volunteer?userAuthId=${user.authId}`);
-  const volunteerJson = await volunteerRes.json();
-  if (user.isAdmin || volunteerJson['isVolunteer']) {
+  const filteredVolunteers = await findQueriedObjects('volunteers', { userAuthId: user.authId });
+  const userIsVolunteer = filteredVolunteers.length > 0;
+  if (user.isAdmin || userIsVolunteer) {
     const eventId = req.body.eventId;
     const userAuthId = req.body.userAuthId;
     try {
@@ -129,13 +123,11 @@ const deleteParticipantAttendedEvents = async (req: NextApiRequest, res: NextApi
 };
 
 handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
-  console.log('checkpoint 0');
   // const response: User | GatekeeperRequestError = await authenticatedFetch(`https://tamudatathon.com/auth/user`, req);
   const response: User | GatekeeperRequestError = await authenticatedFetch(`${getBaseUrl(req)}/auth/user`, req);
   if ((response as GatekeeperRequestError).statusCode === 401) {
     res.writeHead(302, { Location: `/auth/login?r=${req.url}` }).end();
   } else {
-    console.log('checkpoint 1');
     sendParticipantPassportData(req, res, response as User);
   }
 });

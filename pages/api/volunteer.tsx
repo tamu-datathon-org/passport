@@ -39,7 +39,6 @@ const removeUserAsVolunteer = async (req: NextApiRequest, res: NextApiResponse, 
 handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
   const userAuthId = req.query.userAuthId;
   const filteredVolunteers = await findQueriedObjects('volunteers', { userAuthId });
-  console.log('isVolunteer response:', { isVolunteer: filteredVolunteers.length > 0 });
   res.json({ isVolunteer: filteredVolunteers.length > 0 });
 });
 
