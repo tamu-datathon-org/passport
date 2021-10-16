@@ -22,7 +22,7 @@ const defaultParticipantData: participantPassportDataInterface = {
 const sendParticipantPassportData = async (req: NextApiRequest, res: NextApiResponse, user: User) => {
   // const volunteerRes = await fetch(`http://localhost:3000/passport/api/volunteer?userAuthId=${user.authId}`);
   const volunteerRes = await fetch(`${getBaseUrl(req)}/passport/api/volunteer?userAuthId=${user.authId}`);
-  const volunteerJson = volunteerRes.json();
+  const volunteerJson = await volunteerRes.json();
   console.log('volunteerJson:', volunteerJson);
   if (user.isAdmin || volunteerJson['isVolunteer']) {
     const participantAuthId = req.query.auth_id;
