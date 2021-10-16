@@ -6,13 +6,6 @@ import { GatekeeperRequestError, User } from '../../components/UserProvider';
 
 const handler = nextConnect();
 
-export const sendUserVolunteerStatus = async (req: NextApiRequest, res: NextApiResponse, user: User) => {
-  const userAuthId = req.query.userAuthId;
-  const filteredVolunteers = await findQueriedObjects('volunteers', { userAuthId });
-  console.log('isVolunteer response:', { isVolunteer: filteredVolunteers.length > 0 });
-  res.json({ isVolunteer: filteredVolunteers.length > 0 });
-};
-
 const addUserAsVolunteer = async (req: NextApiRequest, res: NextApiResponse, user: User) => {
   if (user.isAdmin) {
     const userAuthId = req.body.userAuthId;
@@ -44,13 +37,10 @@ const removeUserAsVolunteer = async (req: NextApiRequest, res: NextApiResponse, 
 };
 
 handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
-  // const response: User | GatekeeperRequestError = await authenticatedFetch(`https://tamudatathon.com/auth/user`, req);
-  const response: User | GatekeeperRequestError = await authenticatedFetch(`${getBaseUrl(req)}/auth/user`, req);
-  if ((response as GatekeeperRequestError).statusCode === 401) {
-    res.writeHead(302, { Location: `/auth/login?r=${req.url}` }).end();
-  } else {
-    sendUserVolunteerStatus(req, res, response as User);
-  }
+  const userAuthId = req.query.userAuthId;
+  const filteredVolunteers = await findQueriedObjects('volunteers', { userAuthId });
+  console.log('isVolunteer response:', { isVolunteer: filteredVolunteers.length > 0 });
+  res.json({ isVolunteer: filteredVolunteers.length > 0 });
 });
 
 handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
