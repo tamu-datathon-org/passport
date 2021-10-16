@@ -42,6 +42,7 @@ const sendParticipantPassportData = async (req: NextApiRequest, res: NextApiResp
       if (!participantPassportData) {
         await insertOneObject('passport', {
           authId: participantAuthId,
+          yearsAttended: [],
           diningAttended: []
         });
         res.json({
