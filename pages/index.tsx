@@ -11,12 +11,14 @@ interface participantPassportDataInterface {
   authId: string;
   name: string;
   email: string;
+  yearsAttended: Array<number>;
   diningAttended: Array<string>;
 }
 const defaultParticipantData: participantPassportDataInterface = {
   authId: '404',
   name: 'Participant Not Found',
   email: '404@tamudatathon.com',
+  yearsAttended: [],
   diningAttended: []
 };
 
@@ -73,6 +75,8 @@ const removeAttendedEvents = (authId: string, eventId: string, setToast) => {
       setToast({ text: 'Could not update participant data.', type: 'error', delay: 3000 });
     });
 };
+
+const currentTDYear = 2021;
 
 export default function Home(): JSX.Element {
   const { user } = useActiveUser();
@@ -131,6 +135,35 @@ export default function Home(): JSX.Element {
       });
   };
 
+  const attendTDEvent = () => {
+    const tempParticipantPassportData: participantPassportDataInterface = JSON.parse(JSON.stringify(participantPassportData));
+    tempParticipantPassportData.yearsAttended.push(currentTDYear);
+    setParticipantPassportData(tempParticipantPassportData);
+
+    const dbPassportData = {
+      authId: tempParticipantPassportData.authId,
+      diningAttended: tempParticipantPassportData.diningAttended,
+      yearsAttended: tempParticipantPassportData.yearsAttended
+    };
+    updateDatabase(scannedCode, dbPassportData, setToast);
+  };
+
+  const unattendTDEvent = () => {
+    const tempParticipantPassportData: participantPassportDataInterface = JSON.parse(JSON.stringify(participantPassportData));
+    const i = tempParticipantPassportData.yearsAttended.indexOf(currentTDYear);
+    if (i > -1) {
+      tempParticipantPassportData.yearsAttended.splice(i, 1);
+    }
+    setParticipantPassportData(tempParticipantPassportData);
+
+    const dbPassportData = {
+      authId: tempParticipantPassportData.authId,
+      diningAttended: tempParticipantPassportData.diningAttended,
+      yearsAttended: tempParticipantPassportData.yearsAttended
+    };
+    updateDatabase(scannedCode, dbPassportData, setToast);
+  };
+
   const attendDining = (e) => {
     const tempParticipantPassportData: participantPassportDataInterface = JSON.parse(JSON.stringify(participantPassportData));
     if (tempParticipantPassportData.diningAttended.includes(e)) {
@@ -141,7 +174,8 @@ export default function Home(): JSX.Element {
     setParticipantPassportData(tempParticipantPassportData);
     const dbPassportData = {
       authId: tempParticipantPassportData.authId,
-      diningAttended: tempParticipantPassportData.diningAttended
+      diningAttended: tempParticipantPassportData.diningAttended,
+      yearsAttended: tempParticipantPassportData.yearsAttended
     };
     updateDatabase(scannedCode, dbPassportData, setToast);
   };
@@ -181,7 +215,7 @@ export default function Home(): JSX.Element {
       .then((res) => res.json())
       .then((data) => {
         const filteredEvents = data.filter((e) => {
-          const tdStartDay = new Date('October 16, 2021 00:00:00-500');
+          const tdStartDay = new Date('October 16, currentTDYear 00:00:00-500');
           const momentTest = moment(e.startTime, 'YYYY-MM-DD hh:mm A');
           const eventStartTime = momentTest.isValid() ? momentTest.toDate() : new Date(e.startTime);
           return eventStartTime > tdStartDay;
@@ -221,6 +255,19 @@ export default function Home(): JSX.Element {
             <Divider align="start">Personal Data</Divider>
             <b>Name</b>: {participantPassportData?.name} <br />
             <b>E-mail</b>: {participantPassportData?.email} <br />
+            <br />
+            <Divider align="start">Event Check-in</Divider>
+            <div className="flex-container">
+              {participantPassportData?.yearsAttended.includes(currentTDYear) ? (
+                <button onClick={unattendTDEvent} className={`pill event`}>
+                  Unattend TD {currentTDYear}
+                </button>
+              ) : (
+                <button onClick={attendTDEvent} className={`pill`}>
+                  Attend {currentTDYear}
+                </button>
+              )}
+            </div>
             <br />
             <Divider align="start">Attended Dining</Divider>
             <div className="flex-container">

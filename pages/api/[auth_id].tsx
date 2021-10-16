@@ -10,12 +10,14 @@ interface participantPassportDataInterface {
   authId: string;
   name: string;
   email: string;
+  yearsAttended: Array<number>;
   diningAttended: Array<string>;
 }
 const defaultParticipantData: participantPassportDataInterface = {
   authId: '404',
   name: 'Participant Not Found',
   email: '404@tamudatathon.com',
+  yearsAttended: [],
   diningAttended: []
 };
 
@@ -47,6 +49,7 @@ const sendParticipantPassportData = async (req: NextApiRequest, res: NextApiResp
             authId: participantData.authId,
             name: participantName,
             email: participantData.email,
+            yearsAttended: [],
             diningAttended: []
           },
           attendedEventsData: participantAttendedEventIds
@@ -57,6 +60,7 @@ const sendParticipantPassportData = async (req: NextApiRequest, res: NextApiResp
             authId: participantData.authId,
             name: participantName,
             email: participantData.email,
+            yearsAttended: participantPassportData.yearsAttended,
             diningAttended: participantPassportData.diningAttended
           },
           attendedEventsData: participantAttendedEventIds
