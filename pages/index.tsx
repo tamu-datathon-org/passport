@@ -207,7 +207,7 @@ export default function Home(): JSX.Element {
             <h4>Access Denied</h4>
             <p>Please login to an admin account to check people in.</p>
             <Card.Footer>
-              <Link color block href="/auth/login?r=/mailing/">
+              <Link color block href="/auth/login?r=/passport/">
                 Login
               </Link>
             </Card.Footer>
