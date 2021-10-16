@@ -12,14 +12,12 @@ interface participantPassportDataInterface {
   name: string;
   email: string;
   diningAttended: Array<string>;
-  activitiesAttended: Array<string>;
 }
 const defaultParticipantData: participantPassportDataInterface = {
   authId: '404',
   name: 'Participant Not Found',
   email: '404@tamudatathon.com',
-  diningAttended: [],
-  activitiesAttended: []
+  diningAttended: []
 };
 
 const updateDatabase = (authId: string, updatedObject, setToast) => {
@@ -83,7 +81,7 @@ export default function Home(): JSX.Element {
   const [isVolunteer, setIsVolunteer] = useState(false);
   const [participantPassportData, setParticipantPassportData] = useState<participantPassportDataInterface>(defaultParticipantData);
   const [participantAttendedEvents, setParticipantAttendedEvents] = useState([]);
-  const [eventList, setEventList] = useState(['Opening Ceremony']);
+  const [eventList, setEventList] = useState([]);
   const diningList = ['Lunch 1', 'Dinner 1', 'Breakfast 1', 'Lunch 2'];
 
   const handleQRScan = (data) => {
@@ -221,13 +219,13 @@ export default function Home(): JSX.Element {
             <br />
             <br />
             <Divider align="start">Personal Data</Divider>
-            <b>Name</b>: {participantPassportData.name} <br />
-            <b>E-mail</b>: {participantPassportData.email} <br />
+            <b>Name</b>: {participantPassportData?.name} <br />
+            <b>E-mail</b>: {participantPassportData?.email} <br />
             <br />
             <Divider align="start">Attended Dining</Divider>
             <div className="flex-container">
               {diningList.map((e, i) => (
-                <button onClick={() => attendDining(e)} className={`pill ${participantPassportData.diningAttended.includes(e) && 'dining'}`} key={`dining-${i}`}>
+                <button onClick={() => attendDining(e)} className={`pill ${participantPassportData?.diningAttended.includes(e) && 'dining'}`} key={`dining-${i}`}>
                   {e}
                 </button>
               ))}
@@ -236,7 +234,7 @@ export default function Home(): JSX.Element {
             <Divider align="start">Attended Events</Divider>
             <div className="flex-container">
               {eventList.map((e, i) => {
-                if (participantAttendedEvents.includes(e['eventId'])) {
+                if (participantAttendedEvents?.includes(e['eventId'])) {
                   return (
                     <button onClick={() => unattendEvent(e)} className={`pill event`} key={`event-${i}`}>
                       {e['name']}

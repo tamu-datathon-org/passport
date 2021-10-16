@@ -27,7 +27,7 @@ const sendParticipantPassportData = async (req: NextApiRequest, res: NextApiResp
     const participantData = await findOneObject('users', { authId: participantAuthId });
 
     if (!participantData) {
-      res.json(defaultParticipantData);
+      res.json({ passportData: defaultParticipantData, attendedEventsData: [] });
     } else {
       let participantName = 'Not Provided';
       if (participantData.firstName && participantData.lastName) participantName = `${participantData.firstName} ${participantData.lastName}`;
