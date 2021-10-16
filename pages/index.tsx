@@ -4,6 +4,7 @@ import { orgName } from '../components/constants';
 import { Navbar } from '../components/Navbar';
 import { useActiveUser } from '../components/UserProvider';
 import dynamic from 'next/dynamic';
+import moment from 'moment';
 const QrReader: any = dynamic(() => import('react-qr-reader'), { ssr: false });
 
 interface participantPassportDataInterface {
@@ -41,13 +42,50 @@ const updateDatabase = (authId: string, updatedObject, setToast) => {
     });
 };
 
+const updateAttendedEvents = (authId: string, eventId: string, setToast) => {
+  fetch(`/passport/api/${authId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ eventId, userAuthId: authId })
+  })
+    .then((response) => response.json())
+    .then(() => {
+      setToast({ text: 'Participant data updated!', type: 'warning', delay: 3000 });
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      setToast({ text: 'Could not update participant data.', type: 'error', delay: 3000 });
+    });
+};
+
+const removeAttendedEvents = (authId: string, eventId: string, setToast) => {
+  fetch(`/passport/api/${authId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ eventId, userAuthId: authId })
+  })
+    .then((response) => response.json())
+    .then(() => {
+      setToast({ text: 'Participant data updated!', type: 'warning', delay: 3000 });
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      setToast({ text: 'Could not update participant data.', type: 'error', delay: 3000 });
+    });
+};
+
 export default function Home(): JSX.Element {
   const { user } = useActiveUser();
   const [, setToast] = useToasts();
-  const [scannedCode, setScannedCode] = useState('5efc1b99a37c4300032acbd6');
+  const [scannedCode, setScannedCode] = useState('404');
+  const [isVolunteer, setIsVolunteer] = useState(false);
   const [participantPassportData, setParticipantPassportData] = useState<participantPassportDataInterface>(defaultParticipantData);
-  const eventList = ['Opening Ceremony'];
-  const activityList = ['Talent Show'];
+  const [participantAttendedEvents, setParticipantAttendedEvents] = useState([]);
+  const [eventList, setEventList] = useState(['Opening Ceremony']);
   const diningList = ['Lunch 1', 'Dinner 1', 'Breakfast 1', 'Lunch 2'];
 
   const handleQRScan = (data) => {
@@ -57,6 +95,44 @@ export default function Home(): JSX.Element {
   };
   const handleQRError = (err) => {
     console.log(err);
+  };
+
+  const addVolunteer = () => {
+    setIsVolunteer(true);
+    fetch(`/passport/api/volunteer`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ userAuthId: scannedCode })
+    })
+      .then((response) => response.json())
+      .then(() => {
+        setToast({ text: 'User data updated!', type: 'warning', delay: 3000 });
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        setToast({ text: 'Could not update user data.', type: 'error', delay: 3000 });
+      });
+  };
+
+  const removeVolunteer = () => {
+    setIsVolunteer(false);
+    fetch(`/passport/api/volunteer`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ userAuthId: scannedCode })
+    })
+      .then((response) => response.json())
+      .then(() => {
+        setToast({ text: 'User data updated!', type: 'warning', delay: 3000 });
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        setToast({ text: 'Could not update user data.', type: 'error', delay: 3000 });
+      });
   };
 
   const attendDining = (e) => {
@@ -76,14 +152,49 @@ export default function Home(): JSX.Element {
     updateDatabase(scannedCode, dbPassportData, setToast);
   };
 
+  const attendEvent = (e) => {
+    const tempParticipantEventsAttended = JSON.parse(JSON.stringify(participantAttendedEvents));
+    tempParticipantEventsAttended.push(e.eventId);
+    setParticipantAttendedEvents(tempParticipantEventsAttended);
+    updateAttendedEvents(scannedCode, e.eventId, setToast);
+  };
+  const unattendEvent = (e) => {
+    const tempParticipantEventsAttended = JSON.parse(JSON.stringify(participantAttendedEvents));
+    const i = tempParticipantEventsAttended.indexOf(e.eventId);
+    if (i > -1) {
+      tempParticipantEventsAttended.splice(i, 1);
+    }
+    setParticipantAttendedEvents(tempParticipantEventsAttended);
+    removeAttendedEvents(scannedCode, e.eventId, setToast);
+  };
+
   useEffect(() => {
     fetch(`/passport/api/${scannedCode}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
-        setParticipantPassportData(data);
+        setParticipantPassportData(data.passportData);
+        setParticipantAttendedEvents(data.attendedEventsData);
+      });
+    fetch(`/passport/api/volunteer?userAuthId=${scannedCode}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setIsVolunteer(data.isVolunteer);
       });
   }, [scannedCode]);
+
+  useEffect(() => {
+    fetch(`/events/api/json`)
+      .then((res) => res.json())
+      .then((data) => {
+        const filteredEvents = data.filter((e) => {
+          const tdStartDay = new Date('October 16, 2021 00:00:00-500');
+          const momentTest = moment(e.startTime, 'YYYY-MM-DD hh:mm A');
+          const eventStartTime = momentTest.isValid() ? momentTest.toDate() : new Date(e.startTime);
+          return eventStartTime > tdStartDay;
+        });
+        setEventList(filteredEvents);
+      });
+  }, []);
 
   return (
     <>
@@ -95,7 +206,7 @@ export default function Home(): JSX.Element {
         <Text className="sub-heading">{orgName} Check-in System</Text>
         <br />
         {/* If user is not admin, deny access and prompt them to login */}
-        {!user?.isAdmin ? (
+        {!user?.isAdmin && !isVolunteer ? (
           <Card>
             <h4>Access Denied</h4>
             <p>Please login to an admin account to check people in.</p>
@@ -109,12 +220,7 @@ export default function Home(): JSX.Element {
           /* If user is admin, show everything normally */
           <>
             <Divider align="start">Check-in Participants</Divider>
-            <QrReader
-              delay={300}
-              onError={handleQRError}
-              onScan={handleQRScan}
-              style={{ width: '100%' }}
-            />
+            <QrReader delay={300} onError={handleQRError} onScan={handleQRScan} style={{ width: '100%' }} />
             <b>AuthID</b>: {scannedCode}
             <br />
             <br />
@@ -133,21 +239,41 @@ export default function Home(): JSX.Element {
             <br />
             <Divider align="start">Attended Events</Divider>
             <div className="flex-container">
-              {eventList.map((e, i) => (
-                <button className={`pill ${participantPassportData.eventsAttended.includes(e) && 'dining'}`} key={`dining-${i}`}>
-                  {e}
-                </button>
-              ))}
+              {eventList.map((e, i) => {
+                if (participantAttendedEvents.includes(e['eventId'])) {
+                  return (
+                    <button onClick={() => unattendEvent(e)} className={`pill event`} key={`event-${i}`}>
+                      {e['name']}
+                    </button>
+                  );
+                } else {
+                  return (
+                    <button onClick={() => attendEvent(e)} className={`pill`} key={`event-${i}`}>
+                      {e['name']}
+                    </button>
+                  );
+                }
+              })}
             </div>
-            <br />
-            <Divider align="start">Attended Activities</Divider>
-            <div className="flex-container">
-              {activityList.map((e, i) => (
-                <button className={`pill ${participantPassportData.activitiesAttended.includes(e) && 'dining'}`} key={`dining-${i}`}>
-                  {e}
-                </button>
-              ))}
-            </div>
+            {user?.isAdmin ? (
+              <>
+                <br />
+                <Divider align="start">Admin Priviledges</Divider>
+                <div className="flex-container">
+                  {isVolunteer ? (
+                    <button onClick={removeVolunteer} className="pill dining">
+                      Remove Volunteer
+                    </button>
+                  ) : (
+                    <button onClick={addVolunteer} className="pill">
+                      Add Volunteer
+                    </button>
+                  )}
+                </div>
+              </>
+            ) : (
+              <></>
+            )}
           </>
         )}
       </Page>

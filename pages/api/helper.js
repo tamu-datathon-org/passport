@@ -6,6 +6,12 @@ export const findOneObject = async (collection, params) => {
   return returnObj;
 };
 
+export const findQueriedObjects = async (collection, query) => {
+  const { db } = await connectToDatabase();
+  const returnObj = await db.collection(collection).find(query);
+  return returnObj.toArray();
+};
+
 export const insertOneObject = async (collection, object) => {
   const { db } = await connectToDatabase();
   const returnObj = await db.collection(collection).insertOne(object);

@@ -20,6 +20,7 @@
     "express": "^4.17.1",
     "http-proxy": "^1.18.1",
     "isomorphic-unfetch": "^3.1.0",
+    "moment": "^2.29.1",
     "mongodb": "3.6.9",
     "next": "^10.1.4-canary.2",
     "next-connect": "0.10.1",

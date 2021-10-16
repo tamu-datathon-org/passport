@@ -53,6 +53,7 @@ iframe {
 .flex-container {
   display: flex;
   gap: 5px;
+  flex-wrap: wrap;
 }
 .flex-container .pill {
   background-color: rgba(128, 128, 128, 0.5);
