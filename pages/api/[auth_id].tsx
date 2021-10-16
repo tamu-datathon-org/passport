@@ -3,7 +3,6 @@ import { deleteOneObject, findOneObject, findQueriedObjects, insertOneObject, up
 import { NextApiRequest, NextApiResponse } from 'next';
 import { authenticatedFetch, getBaseUrl } from '../../libs';
 import { GatekeeperRequestError, User } from '../../components/UserProvider';
-import { sendUserVolunteerStatus } from './volunteer';
 
 const handler = nextConnect();
 
@@ -24,6 +23,7 @@ const sendParticipantPassportData = async (req: NextApiRequest, res: NextApiResp
   // const volunteerRes = await fetch(`http://localhost:3000/passport/api/volunteer?userAuthId=${user.authId}`);
   const volunteerRes = await fetch(`${getBaseUrl(req)}/passport/api/volunteer?userAuthId=${user.authId}`);
   const volunteerJson = volunteerRes.json();
+  console.log('volunteerJson:', volunteerJson);
   if (user.isAdmin || volunteerJson['isVolunteer']) {
     const participantAuthId = req.query.auth_id;
     const participantData = await findOneObject('users', { authId: participantAuthId });
