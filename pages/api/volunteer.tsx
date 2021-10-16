@@ -9,6 +9,7 @@ const handler = nextConnect();
 export const sendUserVolunteerStatus = async (req: NextApiRequest, res: NextApiResponse, user: User) => {
   const userAuthId = req.query.userAuthId;
   const filteredVolunteers = await findQueriedObjects('volunteers', { userAuthId });
+  console.log('isVolunteer response:', { isVolunteer: filteredVolunteers.length > 0 });
   res.json({ isVolunteer: filteredVolunteers.length > 0 });
 };
 
