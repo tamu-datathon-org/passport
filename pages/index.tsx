@@ -119,12 +119,11 @@ export default function Home(): JSX.Element {
 
   const removeVolunteer = () => {
     setIsParticipantVolunteer(false);
-    fetch(`/passport/api/volunteer`, {
+    fetch(`/passport/api/volunteer?userAuthId=${scannedCode}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ userAuthId: scannedCode })
+      }
     })
       .then((response) => response.json())
       .then(() => {
@@ -216,7 +215,7 @@ export default function Home(): JSX.Element {
       .then((res) => res.json())
       .then((data) => {
         const filteredEvents = data.filter((e) => {
-          const tdStartDay = new Date('October 16, currentTDYear 00:00:00-500');
+          const tdStartDay = new Date('October 15, 2021 00:00:00-500');
           const momentTest = moment(e.startTime, 'YYYY-MM-DD hh:mm A');
           const eventStartTime = momentTest.isValid() ? momentTest.toDate() : new Date(e.startTime);
           return eventStartTime > tdStartDay;

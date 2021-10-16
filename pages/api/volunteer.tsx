@@ -23,7 +23,7 @@ const addUserAsVolunteer = async (req: NextApiRequest, res: NextApiResponse, use
 
 const removeUserAsVolunteer = async (req: NextApiRequest, res: NextApiResponse, user: User) => {
   if (user.isAdmin) {
-    const userAuthId = req.body.userAuthId;
+    const userAuthId = req.query.userAuthId;
     try {
       await deleteOneObject('volunteers', { userAuthId });
       res.json({ success: true });
