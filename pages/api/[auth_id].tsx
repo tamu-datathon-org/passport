@@ -11,17 +11,13 @@ interface participantPassportDataInterface {
   authId: string;
   name: string;
   email: string;
-  eventsAttended: Array<string>;
   diningAttended: Array<string>;
-  activitiesAttended: Array<string>;
 }
 const defaultParticipantData: participantPassportDataInterface = {
   authId: '404',
   name: 'Participant Not Found',
   email: '404@tamudatathon.com',
-  eventsAttended: [],
-  diningAttended: [],
-  activitiesAttended: []
+  diningAttended: []
 };
 
 const sendParticipantPassportData = async (req: NextApiRequest, res: NextApiResponse, user: User) => {

@@ -11,7 +11,6 @@ interface participantPassportDataInterface {
   authId: string;
   name: string;
   email: string;
-  eventsAttended: Array<string>;
   diningAttended: Array<string>;
   activitiesAttended: Array<string>;
 }
@@ -19,7 +18,6 @@ const defaultParticipantData: participantPassportDataInterface = {
   authId: '404',
   name: 'Participant Not Found',
   email: '404@tamudatathon.com',
-  eventsAttended: [],
   diningAttended: [],
   activitiesAttended: []
 };
@@ -145,9 +143,7 @@ export default function Home(): JSX.Element {
     setParticipantPassportData(tempParticipantPassportData);
     const dbPassportData = {
       authId: tempParticipantPassportData.authId,
-      diningAttended: tempParticipantPassportData.diningAttended,
-      eventsAttended: tempParticipantPassportData.eventsAttended,
-      activitiesAttended: tempParticipantPassportData.activitiesAttended
+      diningAttended: tempParticipantPassportData.diningAttended
     };
     updateDatabase(scannedCode, dbPassportData, setToast);
   };
