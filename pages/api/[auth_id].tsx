@@ -20,6 +20,7 @@ const defaultParticipantData: participantPassportDataInterface = {
 };
 
 const sendParticipantPassportData = async (req: NextApiRequest, res: NextApiResponse, user: User) => {
+  console.log('checkpoint 2');
   // const volunteerRes = await fetch(`http://localhost:3000/passport/api/volunteer?userAuthId=${user.authId}`);
   const volunteerRes = await fetch(`${getBaseUrl(req)}/passport/api/volunteer?userAuthId=${user.authId}`);
   const volunteerJson = await volunteerRes.json();
