@@ -82,7 +82,8 @@ export default function Home(): JSX.Element {
   const { user } = useActiveUser();
   const [, setToast] = useToasts();
   const [scannedCode, setScannedCode] = useState('404');
-  const [isVolunteer, setIsVolunteer] = useState(false);
+  const [isParticipantVolunteer, setIsParticipantVolunteer] = useState(false);
+  const [isUserVolunteer, setIsUserVolunteer] = useState(false);
   const [participantPassportData, setParticipantPassportData] = useState<participantPassportDataInterface>(defaultParticipantData);
   const [participantAttendedEvents, setParticipantAttendedEvents] = useState([]);
   const [eventList, setEventList] = useState([]);
@@ -98,7 +99,7 @@ export default function Home(): JSX.Element {
   };
 
   const addVolunteer = () => {
-    setIsVolunteer(true);
+    setIsParticipantVolunteer(true);
     fetch(`/passport/api/volunteer`, {
       method: 'POST',
       headers: {
@@ -117,7 +118,7 @@ export default function Home(): JSX.Element {
   };
 
   const removeVolunteer = () => {
-    setIsVolunteer(false);
+    setIsParticipantVolunteer(false);
     fetch(`/passport/api/volunteer`, {
       method: 'DELETE',
       headers: {
@@ -206,7 +207,7 @@ export default function Home(): JSX.Element {
     fetch(`/passport/api/volunteer?userAuthId=${scannedCode}`)
       .then((res) => res.json())
       .then((data) => {
-        setIsVolunteer(data.isVolunteer);
+        setIsParticipantVolunteer(data.isParticipantVolunteer);
       });
   }, [scannedCode]);
 
@@ -224,6 +225,16 @@ export default function Home(): JSX.Element {
       });
   }, []);
 
+  useEffect(() => {
+    if (user?.authId) {
+      fetch(`/passport/api/volunteer?userAuthId=${user.authId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setIsUserVolunteer(data['isVolunteer']);
+        });
+    }
+  }, [user]);
+
   return (
     <>
       <Navbar />
@@ -234,7 +245,7 @@ export default function Home(): JSX.Element {
         <Text className="sub-heading">{orgName} Check-in System</Text>
         <br />
         {/* If user is not admin, deny access and prompt them to login */}
-        {!user?.isAdmin && !isVolunteer ? (
+        {!user?.isAdmin && !isUserVolunteer ? (
           <Card>
             <h4>Access Denied</h4>
             <p>Please login to an admin account to check people in.</p>
@@ -245,7 +256,7 @@ export default function Home(): JSX.Element {
             </Card.Footer>
           </Card>
         ) : (
-          /* If user is admin, show everything normally */
+          /* If user is admin or volunteer, show everything normally */
           <>
             <Divider align="start">Check-in Participants</Divider>
             <QrReader delay={300} onError={handleQRError} onScan={handleQRScan} style={{ width: '100%' }} />
@@ -301,7 +312,7 @@ export default function Home(): JSX.Element {
                 <br />
                 <Divider align="start">Admin Priviledges</Divider>
                 <div className="flex-container">
-                  {isVolunteer ? (
+                  {isParticipantVolunteer ? (
                     <button onClick={removeVolunteer} className="pill dining">
                       Remove Volunteer
                     </button>
