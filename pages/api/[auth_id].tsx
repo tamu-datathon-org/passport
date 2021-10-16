@@ -128,11 +128,13 @@ const deleteParticipantAttendedEvents = async (req: NextApiRequest, res: NextApi
 };
 
 handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
+  console.log('checkpoint 0');
   // const response: User | GatekeeperRequestError = await authenticatedFetch(`https://tamudatathon.com/auth/user`, req);
   const response: User | GatekeeperRequestError = await authenticatedFetch(`${getBaseUrl(req)}/auth/user`, req);
   if ((response as GatekeeperRequestError).statusCode === 401) {
     res.writeHead(302, { Location: `/auth/login?r=${req.url}` }).end();
   } else {
+    console.log('checkpoint 1');
     sendParticipantPassportData(req, res, response as User);
   }
 });
