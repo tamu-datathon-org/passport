@@ -3,6 +3,7 @@
 Populate `.env.*` files, and remove the `.example` extension
 
 ```bash
+(Windows) npm install -g npm@7.15.1
 npm install
 npm run dev
 ```
