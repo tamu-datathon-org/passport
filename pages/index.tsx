@@ -226,7 +226,7 @@ export default function Home(): JSX.Element {
 
   useEffect(() => {
     if (user?.authId) {
-      fetch(`/passport/api/volunteer?userAuthId=${user.authId}`)
+      fetch(`/passport/api/volunteer?email=${user.email}`)
         .then((res) => res.json())
         .then((data) => {
           setIsUserVolunteer(data['isVolunteer']);
