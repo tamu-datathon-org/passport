@@ -206,7 +206,7 @@ export default function Home(): JSX.Element {
     fetch(`/passport/api/volunteer?email=${scannedCode}`)
       .then((res) => res.json())
       .then((data) => {
-        setIsParticipantVolunteer(data.isParticipantVolunteer);
+        setIsParticipantVolunteer(data.isVolunteer);
       });
   }, [scannedCode]);
 
