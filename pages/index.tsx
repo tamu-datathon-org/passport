@@ -22,8 +22,8 @@ const defaultParticipantData: participantPassportDataInterface = {
   diningAttended: []
 };
 
-const updateDatabase = (authId: string, updatedObject, setToast) => {
-  fetch(`/passport/api/${authId}`, {
+const updateDatabase = (email: string, updatedObject, setToast) => {
+  fetch(`/passport/api/${email}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json'
@@ -40,13 +40,13 @@ const updateDatabase = (authId: string, updatedObject, setToast) => {
     });
 };
 
-const updateAttendedEvents = (authId: string, eventId: string, setToast) => {
-  fetch(`/passport/api/${authId}`, {
+const updateAttendedEvents = (email: string, eventId: string, setToast) => {
+  fetch(`/passport/api/${email}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ eventId, userAuthId: authId })
+    body: JSON.stringify({ eventId, email: email })
   })
     .then((response) => response.json())
     .then(() => {
@@ -58,13 +58,13 @@ const updateAttendedEvents = (authId: string, eventId: string, setToast) => {
     });
 };
 
-const removeAttendedEvents = (authId: string, eventId: string, setToast) => {
-  fetch(`/passport/api/${authId}`, {
+const removeAttendedEvents = (email: string, eventId: string, setToast) => {
+  fetch(`/passport/api/${email}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ eventId, userAuthId: authId })
+    body: JSON.stringify({ eventId, email: email })
   })
     .then((response) => response.json())
     .then(() => {
@@ -76,7 +76,7 @@ const removeAttendedEvents = (authId: string, eventId: string, setToast) => {
     });
 };
 
-const currentTDYear = 2021;
+const currentTDYear = 2022;
 
 export default function Home(): JSX.Element {
   const { user } = useActiveUser();
@@ -91,7 +91,7 @@ export default function Home(): JSX.Element {
 
   const handleQRScan = (data) => {
     if (data) {
-      setScannedCode(data);
+      setScannedCode(encodeURI(JSON.parse(data).email));
     }
   };
   const handleQRError = (err) => {
@@ -105,7 +105,7 @@ export default function Home(): JSX.Element {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ userAuthId: scannedCode })
+      body: JSON.stringify({ email: scannedCode })
     })
       .then((response) => response.json())
       .then(() => {
@@ -119,7 +119,7 @@ export default function Home(): JSX.Element {
 
   const removeVolunteer = () => {
     setIsParticipantVolunteer(false);
-    fetch(`/passport/api/volunteer?userAuthId=${scannedCode}`, {
+    fetch(`/passport/api/volunteer?email=${scannedCode}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
@@ -203,7 +203,7 @@ export default function Home(): JSX.Element {
         setParticipantPassportData(data.passportData);
         setParticipantAttendedEvents(data.attendedEventsData);
       });
-    fetch(`/passport/api/volunteer?userAuthId=${scannedCode}`)
+    fetch(`/passport/api/volunteer?email=${scannedCode}`)
       .then((res) => res.json())
       .then((data) => {
         setIsParticipantVolunteer(data.isParticipantVolunteer);

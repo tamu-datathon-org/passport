@@ -25,8 +25,8 @@ const sendParticipantPassportData = async (req: NextApiRequest, res: NextApiResp
   const filteredVolunteers = await findQueriedObjects('volunteers', { userAuthId: user.authId });
   const userIsVolunteer = filteredVolunteers.length > 0;
   if (user.isAdmin || userIsVolunteer) {
-    const participantAuthId = req.query.auth_id;
-    const participantData = await findOneObject('users', { authId: participantAuthId });
+    const participantEmail = decodeURI(req.query.email as string);
+    const participantData = await findOneObject('users', { email: participantEmail });
 
     if (!participantData) {
       res.json({ passportData: defaultParticipantData, attendedEventsData: [] });
@@ -34,14 +34,14 @@ const sendParticipantPassportData = async (req: NextApiRequest, res: NextApiResp
       let participantName = 'Not Provided';
       if (participantData.firstName && participantData.lastName) participantName = `${participantData.firstName} ${participantData.lastName}`;
 
-      const participantPassportData: participantPassportDataInterface = await findOneObject('passport', { authId: participantAuthId });
-      const participantAttendedEventsData = await findQueriedObjects('attendedevents', { userAuthId: participantAuthId });
+      const participantPassportData: participantPassportDataInterface = await findOneObject('passport', { authId: participantData.authId });
+      const participantAttendedEventsData = await findQueriedObjects('attendedevents', { userAuthId: participantData.authId });
       const participantAttendedEventIds = participantAttendedEventsData.map((d) => d.eventId);
 
       // if participant passport doesn't exist yet, create one
       if (!participantPassportData) {
         await insertOneObject('passport', {
-          authId: participantAuthId,
+          authId: participantData.authId,
           yearsAttended: [],
           diningAttended: []
         });
@@ -95,7 +95,8 @@ const addParticipantAttendedEvents = async (req: NextApiRequest, res: NextApiRes
   const userIsVolunteer = filteredVolunteers.length > 0;
   if (user.isAdmin || userIsVolunteer) {
     const eventId = req.body.eventId;
-    const userAuthId = req.body.userAuthId;
+    const participantData = await findOneObject('users', { email: req.body.email });
+    const userAuthId = participantData.authId;
     console.log('eventId:', eventId, 'userAuthId:', userAuthId);
     try {
       await insertOneObject('attendedevents', { eventId, userAuthId, timeStamp: new Date() });
@@ -114,7 +115,8 @@ const deleteParticipantAttendedEvents = async (req: NextApiRequest, res: NextApi
   const userIsVolunteer = filteredVolunteers.length > 0;
   if (user.isAdmin || userIsVolunteer) {
     const eventId = req.body.eventId;
-    const userAuthId = req.body.userAuthId;
+    const participantData = await findOneObject('users', { email: req.body.email });
+    const userAuthId = participantData.authId;
     try {
       await deleteOneObject('attendedevents', { userAuthId, eventId });
       res.json({ success: true });

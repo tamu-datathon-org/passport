@@ -8,7 +8,8 @@ const handler = nextConnect();
 
 const addUserAsVolunteer = async (req: NextApiRequest, res: NextApiResponse, user: User) => {
   if (user.isAdmin) {
-    const userAuthId = req.body.userAuthId;
+    const participantData = await findOneObject('users', { email: req.body.email });
+    const userAuthId = participantData.authId;
     try {
       await insertOneObject('volunteers', { userAuthId });
       res.json({ success: true });
@@ -23,7 +24,8 @@ const addUserAsVolunteer = async (req: NextApiRequest, res: NextApiResponse, use
 
 const removeUserAsVolunteer = async (req: NextApiRequest, res: NextApiResponse, user: User) => {
   if (user.isAdmin) {
-    const userAuthId = req.query.userAuthId;
+    const participantData = await findOneObject('users', { email: req.query.email });
+    const userAuthId = participantData.authId;
     try {
       await deleteOneObject('volunteers', { userAuthId });
       res.json({ success: true });
@@ -37,8 +39,9 @@ const removeUserAsVolunteer = async (req: NextApiRequest, res: NextApiResponse, 
 };
 
 handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
-  const userAuthId = req.query.userAuthId;
-  const filteredVolunteers = await findQueriedObjects('volunteers', { userAuthId });
+  const participantData = await findOneObject('users', { email: req.query.email });
+
+  const filteredVolunteers = await findQueriedObjects('volunteers', { authId: participantData.authId });
   res.json({ isVolunteer: filteredVolunteers.length > 0 });
 });
 
