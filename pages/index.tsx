@@ -259,7 +259,7 @@ export default function Home(): JSX.Element {
           <>
             <Divider align="start">Check-in Participants</Divider>
             <QrReader delay={300} onError={handleQRError} onScan={handleQRScan} style={{ width: '100%' }} />
-            <b>Manually enter email</b>: <Input placeholder="E-mail" onChange={(e) => setScannedCode(e.target.value)} />
+            <b>Manually enter email</b>: <Input placeholder="E-mail" onChange={(e) => setScannedCode(encodeURI(e.target.value))} />
             <b>AuthID</b>: {scannedCode}
             <br />
             <br />
