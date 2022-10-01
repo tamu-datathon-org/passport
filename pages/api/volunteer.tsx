@@ -41,7 +41,7 @@ const removeUserAsVolunteer = async (req: NextApiRequest, res: NextApiResponse, 
 handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
   const participantData = await findOneObject('users', { email: req.query.email });
 
-  const filteredVolunteers = await findQueriedObjects('volunteers', { authId: participantData.authId });
+  const filteredVolunteers = await findQueriedObjects('volunteers', { userAuthId: participantData.authId });
   res.json({ isVolunteer: filteredVolunteers.length > 0 });
 });
 
