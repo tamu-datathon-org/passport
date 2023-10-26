@@ -1,5 +1,5 @@
 import nextConnect from 'next-connect';
-import { deleteOneObject, findOneObject, findQueriedObjects, insertOneObject, updateOneObject } from './helper';
+import { deleteOneObject, findOneObject, findQueriedObjects, insertOneObject } from './helper';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { authenticatedFetch, getBaseUrl } from '../../libs';
 import { GatekeeperRequestError, User } from '../../components/UserProvider';
