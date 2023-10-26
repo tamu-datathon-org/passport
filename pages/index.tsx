@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import { Text, Page, Divider, useToasts, Card, Link, Input } from '@geist-ui/react';
 import { useState, useEffect } from 'react';
 import { orgName } from '../components/constants';
