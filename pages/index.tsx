@@ -5,7 +5,7 @@ import { Navbar } from '../components/Navbar';
 import { useActiveUser } from '../components/UserProvider';
 import dynamic from 'next/dynamic';
 import moment from 'moment';
-const QrReader: any = dynamic(() => import('react-qr-reader'), { ssr: false });
+import { QrScanner } from '@yudiel/react-qr-scanner';
 
 interface participantPassportDataInterface {
   authId: string;
@@ -76,7 +76,7 @@ const removeAttendedEvents = (email: string, eventId: string, setToast) => {
     });
 };
 
-const currentTDYear = 2022;
+const currentTDYear = 2023;
 
 export default function Home(): JSX.Element {
   const { user } = useActiveUser();
@@ -258,7 +258,9 @@ export default function Home(): JSX.Element {
           /* If user is admin or volunteer, show everything normally */
           <>
             <Divider align="start">Check-in Participants</Divider>
-            <QrReader delay={300} onError={handleQRError} onScan={handleQRScan} style={{ width: '100%' }} />
+            <div style={{ width: '100%' }}>
+              <QrScanner onError={handleQRError} onDecode={handleQRScan} />
+            </div>
             <b>Manually enter email</b>: <Input placeholder="E-mail" onChange={(e) => setScannedCode(encodeURI(e.target.value))} />
             <b>AuthID</b>: {scannedCode}
             <br />
