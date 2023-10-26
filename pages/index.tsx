@@ -304,7 +304,9 @@ export default function Home(): JSX.Element {
               ))}
             </div>
             <br />
-            <Divider align="start">Attended Events</Divider>
+            {/* attended events support has been dropped, if need be, then the addEvents API in portal needs to be called
+            to generate unique eventIds and manually populated in the markdowns.. ._. *, fetching does work however/}    
+            {/* <Divider align="start">Attended Events</Divider>
             <br />
             <div className="flex-container">
               {eventList.map((e, i) => {
@@ -322,7 +324,7 @@ export default function Home(): JSX.Element {
                   );
                 }
               })}
-            </div>
+            </div> */}
             {user?.isAdmin ? (
               <>
                 <br />
