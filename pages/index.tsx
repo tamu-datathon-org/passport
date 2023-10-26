@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { orgName } from '../components/constants';
 import { Navbar } from '../components/Navbar';
 import { useActiveUser } from '../components/UserProvider';
-import dynamic from 'next/dynamic';
 import moment from 'moment';
 import { QrScanner } from '@yudiel/react-qr-scanner';
 
@@ -261,7 +260,7 @@ export default function Home(): JSX.Element {
             <div style={{ width: '100%' }}>
               <QrScanner onError={handleQRError} onDecode={handleQRScan} />
             </div>
-            <b>Manually enter email</b>: <Input placeholder="E-mail" onChange={(e) => setScannedCode(encodeURI(e.target.value))} />
+            <b>Manually enter email</b>: <Input placeholder="E-mail" onChange={(e) => setScannedCode(encodeURI(e.target.value))} crossOrigin={undefined} />
             <b>AuthID</b>: {scannedCode}
             <br />
             <br />

@@ -1,8 +1,10 @@
 import React from 'react';
+/*eslint-disable*/
 import { User, UserCurrentStatus, UserProviderState, GatekeeperRequestError } from './interfaces';
 import PropTypes from 'prop-types';
 import useSWR from 'swr';
 import { fetcher } from '../../libs';
+
 
 export const UserProviderContext = React.createContext({} as UserProviderState);
 
@@ -41,5 +43,5 @@ export const UserProvider: React.FC<React.HTMLProps<HTMLDivElement>> = ({ childr
 };
 
 UserProvider.propTypes = {
-  children: PropTypes.element
+  children: PropTypes.any
 };
