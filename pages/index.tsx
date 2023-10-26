@@ -196,6 +196,10 @@ export default function Home(): JSX.Element {
   };
 
   useEffect(() => {
+    fetchParticipantData();
+  }, [scannedCode]);
+
+  const fetchParticipantData = () => {
     fetch(`/passport/api/${scannedCode}`)
       .then((res) => res.json())
       .then((data) => {
@@ -207,7 +211,7 @@ export default function Home(): JSX.Element {
       .then((data) => {
         setIsParticipantVolunteer(data.isVolunteer);
       });
-  }, [scannedCode]);
+  };
 
   useEffect(() => {
     fetch(`/events/api/json`)
@@ -263,6 +267,12 @@ export default function Home(): JSX.Element {
             </div>
             <b>Manually enter email</b>: <Input placeholder="E-mail" onChange={(e) => setScannedCode(encodeURI(e.target.value))} crossOrigin={undefined} />
             <b>AuthID</b>: {scannedCode}
+            <br />
+            <div className="flex-container">
+              <button onClick={fetchParticipantData} className={`pill`}>
+                Resubmit
+              </button>
+            </div>
             <br />
             <br />
             <Divider align="start">Personal Data</Divider>
