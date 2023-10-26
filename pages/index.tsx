@@ -257,7 +257,8 @@ export default function Home(): JSX.Element {
           /* If user is admin or volunteer, show everything normally */
           <>
             <Divider align="start">Check-in Participants</Divider>
-            <div style={{ width: '100%' }}>
+            <br />
+            <div style={{ width: '80%' }}>
               <QrScanner onError={handleQRError} onDecode={handleQRScan} />
             </div>
             <b>Manually enter email</b>: <Input placeholder="E-mail" onChange={(e) => setScannedCode(encodeURI(e.target.value))} crossOrigin={undefined} />
@@ -265,10 +266,12 @@ export default function Home(): JSX.Element {
             <br />
             <br />
             <Divider align="start">Personal Data</Divider>
+            <br />
             <b>Name</b>: {participantPassportData?.name} <br />
             <b>E-mail</b>: {participantPassportData?.email} <br />
             <br />
             <Divider align="start">Event Check-in</Divider>
+            <br />
             <div className="flex-container">
               {participantPassportData?.yearsAttended.includes(currentTDYear) ? (
                 <button onClick={unattendTDEvent} className={`pill event`}>
@@ -282,6 +285,7 @@ export default function Home(): JSX.Element {
             </div>
             <br />
             <Divider align="start">Attended Dining</Divider>
+            <br />
             <div className="flex-container">
               {diningList.map((e, i) => (
                 <button onClick={() => attendDining(e)} className={`pill ${participantPassportData?.diningAttended.includes(e) && 'dining'}`} key={`dining-${i}`}>
@@ -291,6 +295,7 @@ export default function Home(): JSX.Element {
             </div>
             <br />
             <Divider align="start">Attended Events</Divider>
+            <br />
             <div className="flex-container">
               {eventList.map((e, i) => {
                 if (participantAttendedEvents?.includes(e['eventId'])) {
@@ -312,6 +317,7 @@ export default function Home(): JSX.Element {
               <>
                 <br />
                 <Divider align="start">Admin Priviledges</Divider>
+                <br />
                 <div className="flex-container">
                   {isParticipantVolunteer ? (
                     <button onClick={removeVolunteer} className="pill dining">
