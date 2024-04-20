@@ -76,7 +76,7 @@ const removeAttendedEvents = (email: string, eventId: string, setToast) => {
     });
 };
 
-const currentTDYear = 2023;
+const currentTDYear = 2024;
 
 export default function Home(): JSX.Element {
   const { user } = useActiveUser();
